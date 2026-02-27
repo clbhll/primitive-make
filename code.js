@@ -110,6 +110,11 @@ figma.ui.onmessage = async function (msg) {
     }
   }
 
+  // ── Resize ─────────────────────────────────────────────────────
+  if (msg.type === "resize") {
+    figma.ui.resize(msg.width, msg.height);
+  }
+
   // ── Cancel ─────────────────────────────────────────────────────
   if (msg.type === "cancel") {
     figma.closePlugin();
