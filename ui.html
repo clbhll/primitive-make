@@ -74,7 +74,7 @@
     border: none;
     color: var(--text);
     font-family: var(--mono);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     outline: none;
     width: 100%;
@@ -143,20 +143,21 @@
     padding: 16px 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
     cursor: pointer;
     transition: filter 0.12s ease;
   }
   .swatch:hover { filter: brightness(1.08); }
-  .swatch-name { font-family: var(--mono); font-size: 14px; font-weight: 400; letter-spacing: 0; }
-  .swatch-hex { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+  .swatch-name { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0; display: flex; gap: 4px; }
+  .swatch-hex { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0; display: flex; gap: 8px; opacity: 0.8; }
 
   /* Add button */
   .add-btn {
-    min-width: 40px;
-    width: 40px;
+    min-width: 240px;
+    width: 240px;
+    height: 33px;
     flex-shrink: 0;
-    align-self: stretch;
+    align-self: flex-start;
     background: transparent;
     border: 1px dashed var(--figma-color-border);
     border-radius: 8px;
@@ -382,6 +383,15 @@ function getContrast(hex) {
   return (0.299*r+0.587*g+0.114*b)/255 > 0.55 ? "#000" : "#fff";
 }
 
+function hexToRgb255(hex) {
+  hex = hex.replace("#","");
+  return {
+    r: parseInt(hex.substring(0,2),16),
+    g: parseInt(hex.substring(2,4),16),
+    b: parseInt(hex.substring(4,6),16)
+  };
+}
+
 function isValidHex(hex) {
   return /^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(hex);
 }
@@ -477,19 +487,39 @@ function render() {
 
         var nameLine = document.createElement("div");
         nameLine.className = "swatch-name";
-        nameLine.textContent = ramp.name + "/" + s.step;
+        var nameSpan = document.createElement("span");
+        nameSpan.textContent = ramp.name;
+        var slashSpan = document.createElement("span");
+        slashSpan.textContent = "/";
+        var stepSpan = document.createElement("span");
+        stepSpan.textContent = s.step;
+        nameLine.appendChild(nameSpan);
+        nameLine.appendChild(slashSpan);
+        nameLine.appendChild(stepSpan);
 
         var hexLine = document.createElement("div");
         hexLine.className = "swatch-hex";
-        hexLine.textContent = s.hex.toUpperCase();
+        var hexVal = s.hex.toUpperCase();
+        var rgb = hexToRgb255(s.hex);
+        var hexSpan = document.createElement("span");
+        hexSpan.textContent = hexVal;
+        var dashSpan = document.createElement("span");
+        dashSpan.textContent = "–";
+        var rgbSpan = document.createElement("span");
+        rgbSpan.textContent = rgb.r + ", " + rgb.g + ", " + rgb.b;
+        hexLine.appendChild(hexSpan);
+        hexLine.appendChild(dashSpan);
+        hexLine.appendChild(rgbSpan);
 
         swatch.appendChild(nameLine);
         swatch.appendChild(hexLine);
 
         swatch.addEventListener("click", function() {
-          copyText(s.hex.toUpperCase());
-          hexLine.textContent = "copied!";
-          setTimeout(function(){ hexLine.textContent = s.hex.toUpperCase(); }, 1000);
+          copyText(hexVal);
+          hexSpan.textContent = "copied!";
+          dashSpan.style.display = "none";
+          rgbSpan.style.display = "none";
+          setTimeout(function(){ hexSpan.textContent = hexVal; dashSpan.style.display = ""; rgbSpan.style.display = ""; }, 1000);
         });
 
         col.appendChild(swatch);
@@ -691,7 +721,7 @@ function showOverwriteModal(duplicates, pushRamps, collectionName) {
     handle.setPointerCapture(e.pointerId);
 
     function onMove(e) {
-      var w = Math.round(Math.max(300, startW + (e.clientX - startX)));
+      var w = Math.round(Math.max(520, startW + (e.clientX - startX)));
       var h = Math.round(Math.max(200, startH + (e.clientY - startY)));
       parent.postMessage({ pluginMessage: { type: "resize", width: w, height: h } }, "*");
     }
