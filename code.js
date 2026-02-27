@@ -1,4 +1,4 @@
-// Primitive Token Builder — Figma Plugin (sandbox)
+// Primitive Make — Figma Plugin (sandbox)
 // Runs in Figma's main thread. Communicates with ui.html via postMessage.
 
 figma.showUI(__html__, { width: 520, height: 680, themeColors: true });

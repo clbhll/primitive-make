@@ -1,4 +1,4 @@
-# Primitive Token Builder — Figma Plugin
+# Primitive Make — Figma Plugin
 
 A Figma plugin for generating color primitive token ramps and pushing them directly into Figma as color variables.
 
